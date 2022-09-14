@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- <link rel="stylesheet" href="resource/css/all.css"> -->
+    <title>飲料店</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        body{
+            color: white;
+            height: 100vh;
+            background-color: rgba(171, 48, 48, 0.15);
+        }
+        body .vueContainer{
+            height: 100%;
+        }
+
+        #TopNav {
+            width: 100%;
+            background-color: rgb(80, 95, 95);
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .TopNavLeft {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+        }
+
+        .TopNavLeft a {
+            display: inline-block;
+            width: 80px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            margin: 0px 5px;
+            padding: 0px 5px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .TopNavRight {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
+        }
+
+        .TopNavRight a {
+            display: inline-block;
+            width: 80px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            margin: 0px 5px;
+            padding: 0px 5px;
+            text-decoration: none;
+            color: rgb(255, 255, 255);
+        }
+
+        #Main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 10px auto;
+            overflow-y: auto;
+            height: calc( 100% - 90px);
+        }
+
+
+
+        #LogoImg {
+            height: 100%;
+        }
+
+        #MenuList {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .MenuListColumn {
+            width: 30%;
+            /* height: 1000px; */
+        }
+
+        .MenuCategoryContainer {
+            margin: 10px;
+            padding: 10px;
+            background-color: rgb(97, 76, 75);
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .SingleProductContainer {
+            height: 50px;
+            margin-top: 10px;
+            /* background-color: rgb(75, 76, 97); */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.089);
+            display: flex;
+            align-items: center;
+        }
+
+        .ProductImg {
+            width: 20%;
+        }
+
+        .ProductImg img {
+            width: 35px;
+        }
+
+        .ProductName {
+            width: 50%;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .ProductPrice {
+            width: 15%;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .ProductCtrl {
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .SingleProductContainer:hover .ProductCtrl .CartIcon {
+            display: block;
+        }
+        
+
+        .SingleProductContainer .ProductCtrl .CartIcon {
+            display: none;
+        }
+
+        .Loading .SingleProductContainer .ProductCtrl .CartIcon {
+            display: none;
+        }
+
+        .Loading .SingleProductContainer:hover .ProductCtrl .SpinnerIcon {
+            display: block;
+        }
+       
+        .SpinnerIcon {
+            display: none;
+        }
+        .trashIcon{
+            display: none;
+        }
+
+        #AlertFinishMsg {
+            display: none;
+            position: fixed;
+            width: 100%;
+            top: 25px;
+            text-align: center;
+            border-radius: 5px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 20px;
+            text-align: center;
+        }
+        #AlertFinishMsg .AlertFinishMsgContent {
+            margin: 0 auto;
+            width: fit-content;
+            text-align: center;
+            border-radius: 5px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 20px;
+            background-color: rgb(7, 135, 67);
+            color: white;
+        }
+
+        #AlertFinishMsg.Show {
+            display: block;
+            pointer-events: none;
+        }
+
+        .CartAmountTag {
+            position: absolute;
+            top: 12px;
+            margin-left: 55px;
+            font-size: 14px;
+            border-radius: 50%;
+            height: 20px;
+            width: 20px;
+            line-height: 20px;
+            background-color: red;
+            color: white;
+            display: block;
+        }
+
+        .CartAmountTag:empty {
+            display: none;
+        }
+
+        #CartSideContainer{
+            background-color: #354040;
+            position: fixed;
+            right: 0;
+            top:0;
+            height: 100%;
+            width: 300px;
+            transform: translateX(100%); 
+	        transition: 0.5s; 
+        }
+        #CartSideContainer.Show{
+            transform: translateX(0%); 
+        }
+        #CartProductContainer {
+            padding: 10px;
+            overflow-y: auto;
+            height: calc(100% - 150px);
+        }
+        .CartIcon {
+            cursor: pointer;
+            color: rgb(12, 28, 200);
+        }
+        #CartProductContainer .CartIcon {
+            color: red;
+        }
+        .CartTitle {
+            text-align: center;
+            padding: 20px;
+            font-size: 22px;
+            height: 70px;
+        }
+        .CartFoot {
+            text-align: center;
+            font-size: 20px;
+            height: 80px;
+            border-top: 1px solid #0005;
+            line-height: 80px;
+        }
+        .CloseX{
+            right: 0;
+            padding: 25px;
+            position: absolute;
+        }
+
+        #CartLoadingContainer{
+            text-align: center;
+            padding: 25px;
+        }
+
+        .isNotScroll{
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px){
+            #MenuList{
+                flex-wrap: wrap;
+            }
+            .MenuListColumn{
+                width: 100%;
+            }
+            .SingleProductContainer .ProductCtrl .CartIcon {
+                display: block;
+            }
+        } 
+       
+    </style>
+</head>
+
+<body class="isNotScroll">
+    <!-- <h1><i class="fas fa-magic"></i>Hello, world!</h1> -->
+    <div class="vueContainer" v-cloak>
+        <div id="TopNav">
+            <div id="TopNav">
+                <div class="TopNavLeft">
+                  
+                </div>
+                <div class="TopNavMiddle">
+                    <img id="LogoImg" src="img/Logo.png">
+                </div>
+                <div class="TopNavRight">
+                    <a href="#" id="CartHref" v-on:click="isCartShow = true">購物車
+                        <div class="CartAmountTag">{{CartProduct.length!=0?CartProduct.length:''}}</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="Main">
+            <div id="MenuList" :class="isLoading?'Loading':''">
+                <div v-for="(CategoryList, index) in ProductArrange" class="MenuListColumn ">
+                    <div v-for="(Category, index2) in CategoryList" class="MenuCategoryContainer">
+                        {{Category.CategoryName}}
+                        <div v-for="(Product, index3) in Category.CategoryProduct" class="SingleProductContainer">
+                            <div class="ProductImg">
+                                <img :src="'img/'+Product.ProductImg+'.jpg'">
+                            </div>
+                            <div class="ProductName">
+                                {{Product.ProductName}}
+                            </div>
+                            <div class="ProductPrice">
+                                {{Product.ProductPrice}}
+                            </div>
+                            <div class="ProductCtrl ">
+                                <i class="fa-solid fa-cart-shopping CartIcon"
+                                    v-on:click="AddProductToCart(Product.Id,Product.ProductName)"></i>
+                                <i class="fas fa-spinner fa-spin SpinnerIcon"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="AlertFinishMsg" :class="isFinishMsgShow ? 'Show' :''">
+            <div class="AlertFinishMsgContent">
+                {{FinishMsg}}
+            </div>
+        </div>
+        <div id="CartSideContainer" :class="isCartShow?'Show':''">
+            <div class="CloseX" ><i class="fa-solid fa-x" role="button" v-on:click="isCartShow=false"></i></div>
+            <div class="CartTitle"> 購物車 </div>
+            <div v-if="isCartOpenLoading" id="CartLoadingContainer"><i class="fas fa-3x fa-spinner fa-spin"></i></div>
+            <div v-else id="CartProductContainer" class="isLoading?'Loading':''">
+                <div v-for="(Product, index) in CartProduct" class="SingleProductContainer">
+                    <div class="ProductImg">
+                        <img :src="'img/'+Product.ProductImg+'.jpg'">
+                    </div>
+                    <div class="ProductName">
+                        {{Product.ProductName}}
+                    </div>
+                    <div class="ProductPrice">
+                        {{Product.ProductPrice}}
+                    </div>
+                    <div class="ProductCtrl ">
+                        <i class="fa-regular fa-trash-can CartIcon" role="button"  v-on:click="DeleteProductFormCart(Product.CartId)"></i>
+                        <i class="fas fa-spinner fa-spin SpinnerIcon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="CartFoot">
+                總計：{{CartAmount}}
+            </div>
+            
+        </div>
+
+    </div>
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous">
+        </script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script> -->
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="global.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <!-- <script src="View/js/global.js"></script> -->
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+    -->
+
+    <script>
+        var Timer;
+        Vue.createApp({
+            data() {
+                return {
+                    ProductArrange:<?php echo $ProductArrange ?>,
+                    UserId: "<?php echo $_SESSION['UserId'] ?>",
+                    CartProduct:<?php echo $CartProduct ?>,
+                    isLoading:false,
+                    isCartOpenLoading:false,
+                    isFinishMsgShow:false,
+                    FinishMsg:'',
+                    isCartShow:false,
+                }
+        },
+
+            methods: {
+            AddProductToCart(ProductId, ProductName) {
+                this.isLoading = true;
+                postAjaxRequest({
+                    url: 'Cmd.php',
+                    data: { Cmd: 'AddProductToCart', ProductId: ProductId },
+                    success: (data) => {
+                        this.CartProduct = data.CartProduct;
+                        this.isLoading = false;
+                        this.isFinishMsgShow = true;
+                        this.FinishMsg = "「" + ProductName + "」成功加入購物車！";
+                        if(Timer)clearTimeout(Timer);
+                        Timer = setTimeout(() => {
+                            this.isFinishMsgShow = false
+                        }, 3000)
+
+                    },
+                    // error: function (err) {
+                    // }
+                })
+            },
+            DeleteProductFormCart(CartId) {
+                this.isLoading = true;
+                postAjaxRequest({
+                    url: 'Cmd.php',
+                    data: { Cmd: 'DeleteProductFormCart', CartId: CartId },
+                    success: (data) => {
+                        this.CartProduct = data.CartProduct;
+                        this.isLoading = false;
+                    },
+                    // error: function (err) {
+                    // }
+                })
+            },
+
+            
+        },
+        computed: {
+            CartAmount() {
+                var Amount = 0 ;
+                this.CartProduct.forEach(element => {
+                    Amount += element.ProductPrice;
+                });
+                return Amount;
+            },
+        },
+            beforeMount() {
+            console.log('this.UserId')
+            console.log(this.UserId)
+        }
+        }).mount('.vueContainer')
+
+
+    </script>
+</body>
+
+</html>
